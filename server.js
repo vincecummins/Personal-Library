@@ -1,15 +1,29 @@
 'use strict';
-
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
 require('dotenv').config();
-
+const DB = process.env.DB
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
-
+const mongoose = require('mongoose')
 const app = express();
+
+const start = async() => {
+  await mongoose.connect(DB,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
+});
+}
+
+start()
+mongoose.connection.on('error', console.error.bind(console, 'connection error: '));
+mongoose.connection.once('open', function () {
+  console.log("connected to DB ");
+});
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
